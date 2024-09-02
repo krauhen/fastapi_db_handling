@@ -1,6 +1,6 @@
-import os
-
 from fastapi import FastAPI
+
+from db_exp.util.azure_connector import get_secret, get_secret_client
 from db_exp.util.db_handler import *
 from db_exp.api.v1.user import router as user_router
 from db_exp.api.v1.image import router as image_router
@@ -20,7 +20,9 @@ app.include_router(metadata_router, prefix="/metadata", tags=["metadata"])
 
 @app.on_event("startup")
 def startup():
-    user, password = get_auth_db()
+    get_secret_client()
+    user = get_secret("user")
+    password = get_secret("password")
 
     global db_params
     db_params = DBParams(dbname="image_database", user=user, password=password)

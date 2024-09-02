@@ -1,27 +1,8 @@
-import os
 import psycopg2
 import asyncpg
 
 from psycopg2 import sql
 from db_exp.models.db import DBParams
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.secrets import SecretClient
-
-
-def get_auth_db():
-    credential = DefaultAzureCredential()
-
-    key_vault_name = os.getenv("KEY_VAULT_NAME")
-    key_vault_uri = f"https://{key_vault_name}.vault.azure.net"
-
-    secret_client = SecretClient(vault_url=key_vault_uri, credential=credential)
-    user = secret_client.get_secret("user")
-    password = secret_client.get_secret("password")
-
-    user = str(user.value)
-    password = str(password.value)
-
-    return user, password
 
 
 async def get_db():
