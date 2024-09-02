@@ -1,4 +1,3 @@
-
 import os
 import psycopg2
 import asyncpg
@@ -18,6 +17,9 @@ def get_auth_db():
     secret_client = SecretClient(vault_url=key_vault_uri, credential=credential)
     user = secret_client.get_secret("user")
     password = secret_client.get_secret("password")
+
+    user = str(user.value)
+    password = str(password.value)
 
     return user, password
 

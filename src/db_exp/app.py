@@ -21,8 +21,10 @@ app.include_router(metadata_router, prefix="/metadata", tags=["metadata"])
 @app.on_event("startup")
 def startup():
     user, password = get_auth_db()
+
     global db_params
     db_params = DBParams(dbname="image_database", user=user, password=password)
+
     create_database(db_params)
     create_tables(db_params)
 
