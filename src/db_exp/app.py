@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from contextlib import asynccontextmanager
 from db_exp.util.azure_connector import get_secret, get_secret_client
 from db_exp.util.db_handler import *
 from db_exp.api.v1.user import router as user_router
@@ -11,15 +12,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-app = FastAPI()
-
-app.include_router(user_router, prefix="/user", tags=["user"])
-app.include_router(image_router, prefix="/image", tags=["image"])
-app.include_router(metadata_router, prefix="/metadata", tags=["metadata"])
-
-
-@app.on_event("startup")
-def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     get_secret_client()
     user = get_secret("user")
     password = get_secret("password")
@@ -30,7 +24,11 @@ def startup():
     create_database(db_params)
     create_tables(db_params)
 
+    yield
 
-@app.on_event("shutdown")
-def shutdown():
-    pass
+
+app = FastAPI(lifespan=lifespan)
+
+app.include_router(user_router, prefix="/user", tags=["user"])
+app.include_router(image_router, prefix="/image", tags=["image"])
+app.include_router(metadata_router, prefix="/metadata", tags=["metadata"])

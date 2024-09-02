@@ -2,13 +2,8 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class Auth(BaseModel):
-    user: str
-    password: str
-
-
 class DBParams(BaseModel):
-    dbname: str = "postgres"
+    dbname: str
     user: str
     password: str
     host: str = "localhost"

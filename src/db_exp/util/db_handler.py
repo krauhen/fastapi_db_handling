@@ -23,6 +23,7 @@ async def get_db():
 def create_database(db_params: DBParams):
     try:
         default_db_params = DBParams(
+            dbname="postgres",
             user=db_params.user,
             password=db_params.password,
             host=db_params.host,
