@@ -8,23 +8,25 @@ from db_exp.api.v1.image import router as image_router
 from db_exp.api.v1.metadata import router as metadata_router
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    get_secret_client()
-    user = get_secret("user")
-    password = get_secret("password")
+    try:
+        get_secret_client()
+        user = get_secret("user")
+        password = get_secret("password")
 
-    global db_params
-    db_params = DBParams(dbname="image_database", user=user, password=password)
+        global db_params
+        db_params = DBParams(database="image_database", user=user, password=password)
 
-    create_database(db_params)
-    create_tables(db_params)
+        await create_database(db_params)
+        await create_tables(db_params)
 
-    yield
+        yield
+    except Exception as e:
+        raise e
 
 
 app = FastAPI(lifespan=lifespan)

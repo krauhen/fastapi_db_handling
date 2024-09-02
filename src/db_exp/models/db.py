@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 
 class DBParams(BaseModel):
-    dbname: str
+    database: str
     user: str
     password: str
     host: str = "localhost"
